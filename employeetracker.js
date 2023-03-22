@@ -1,13 +1,57 @@
-const mysql = require("mysql2");
+// const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
+const db = require('./db/connection');
 
-require('dotenv').config();
+// console.log("Database: ", db);
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3001,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: 'employee_db',
-});
+function init() {
+
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "title",
+            message: "What is the title of the employee?"
+        },
+        {
+            type: "input",
+            name: "name",
+            message: "What is the name of the department?"
+        },
+    ]).then(function(answers) {
+        console.log(answers);
+        // Basic Query to SHOW DATA
+    /*    db.query("SELECT * FROM department;", function(error, data) {
+            if(error) {
+                console.log(error);
+                throw error;
+            }
+
+          //  console.log("Data: ", data);
+            console.table(data);
+        });
+        */
+        
+        // in reference to PREPARED STATEMENTS
+        db.query("INSERT INTO department SET ?;", answers.name, function(error, data) {
+            if(error) {
+                console.log(error);
+                throw error;
+            }
+
+          //  console.log("Data: ", data);
+            console.table(data);
+        });
+
+
+    }).catch(function(error) {
+        if(error) {
+            throw error;
+        }
+    });
+
+    // console.log("I am code after the ASYNC function");
+
+}
+
+init();
