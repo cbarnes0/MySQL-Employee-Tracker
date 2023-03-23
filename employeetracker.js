@@ -1,10 +1,8 @@
-// const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
 const db = require('./db/connection');
 
-// console.log("Database: ", db);
-
+// Init/inquirer prompt
 function init() {
     inquirer.prompt([
         {
@@ -63,7 +61,7 @@ function init() {
         }
     });
 };
-
+// displays all departments
 function viewAllDepartments() {
     db.query("SELECT * FROM department;", function(error, data) {
         if (error) {
@@ -74,7 +72,7 @@ function viewAllDepartments() {
         init();
     });
 };
-
+// displays all roles
 function viewAllRoles() {
     db.query("SELECT * FROM role", function(error, data) {
         if (error) {
@@ -85,7 +83,7 @@ function viewAllRoles() {
         init();
     });
 ;}
-
+// displays all employees
 function viewAllEmployees() {
     db.query("SELECT * FROM employee", function(error, data) {
         if (error) {
@@ -96,7 +94,7 @@ function viewAllEmployees() {
         init();
     });
 };
-
+// adds a department
 function addDepartment() {
     inquirer.prompt([
         {
@@ -116,33 +114,47 @@ function addDepartment() {
         });
     });
 };
-
+// adds a role and lets you choose what department is a part of
 function addRole() {
-    inquirer.prompt([
+    db.query("SELECT * FROM department", function(err, results) {
+      if (err) throw err;
+  
+      inquirer.prompt([
         {
-            name: "name",
-            type: "input",
-            message: "What Role would you like to add?"
+          name: "name",
+          type: "input",
+          message: "What Role would you like to add?"
         },
         {
-            name: "salary",
-            type: "input",
-            message: "What is this role's salary?"
+          name: "salary",
+          type: "input",
+          message: "What is this role's salary?"
         },
-    ]).then(function(res) {
+        {
+          name: "department_id",
+          type: "list",
+          message: "Which department is this role a part of?",
+          choices: results.map(department => ({ 
+            name: department.name,
+            value: department.id
+          }))
+        }
+      ]).then(function(res) {
         db.query("INSERT INTO role SET ?",
-        {
+          {
             title: res.name,
             salary: res.salary,
-        },
-        function(error) {
+            department_id: res.department_id
+          },
+          function(error) {
             if (error) throw error
             console.table(res);
             init();
-        });
+          });
+      });
     });
-};
-
+  }
+// adds employee and allows you to select their roleId and managerId
 function addEmployee() {
     inquirer.prompt([
       {
@@ -177,6 +189,45 @@ function addEmployee() {
         if (error) throw error;
         console.table(res);
         init();
+      });
+    });
+  };
+// allows you to update employee role
+  function updateEmployeeRole() {
+    db.query("SELECT * FROM employee", function(err, results) {
+      if (err) throw err;
+  
+      inquirer.prompt([
+        {
+          name: "employeeId",
+          type: "list",
+          message: "Which employee would you like to update?",
+          choices: results.map(employee => ({ 
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id
+          }))
+        },
+        {
+          name: "roleId",
+          type: "input",
+          message: "What is the employee's new role ID?"
+        }
+      ]).then(function(res) {
+        db.query("UPDATE employee SET ? WHERE ?",
+          [
+            {
+              role_id: res.roleId
+            },
+            {
+              id: res.employeeId
+            }
+          ],
+          function(error) {
+            if (error) throw error;
+            console.log("Employee role updated successfully!");
+            init();
+          }
+        );
       });
     });
   }
