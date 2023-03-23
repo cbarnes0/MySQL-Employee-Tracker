@@ -19,7 +19,8 @@ function init() {
                 "Add a Department",
                 "Add a Role",
                 "Add an Employee",
-                "Update an Employee Role"
+                "Update an Employee Role",
+                "Quit"
             ]
         }
     ]).then(function(answer) {
@@ -51,6 +52,10 @@ function init() {
             case "Update an Employee Role":
                 updateEmployeeRole();
             break;
+            default:
+                db.end();
+                process.exit();
+            break;
         }
     }).catch(function(err) {
         if(err) {
@@ -58,6 +63,17 @@ function init() {
         }
     });
 };
+
+function viewAllDepartments() {
+    db.query("SELECT * FROM department;", function(error, data) {
+        if (error) {
+            console.log(error);
+            throw error;
+        }
+        console.table(data);
+        init();
+    });
+}
 
     
 
