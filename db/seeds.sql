@@ -1,12 +1,12 @@
 USE employee_db;
 
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Management");
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Register");
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Kitchen");
-INSERT INTO department (name)
+INSERT INTO department (department_name)
 VALUES ("Marketing");
 
 INSERT INTO role (title, salary, department_id)
@@ -25,4 +25,4 @@ VALUES ("Squidward", "Tentacles", 2, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Spongebob", "Squarepants", 3, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Sheldon", "Plankton", 4, null);
+VALUES ("Sheldon", "Plankton", 4, 4);
