@@ -6,52 +6,59 @@ const db = require('./db/connection');
 // console.log("Database: ", db);
 
 function init() {
-
     inquirer.prompt([
         {
-            type: "input",
-            name: "title",
-            message: "What is the title of the employee?"
-        },
-        {
-            type: "input",
-            name: "name",
-            message: "What is the name of the department?"
-        },
-    ]).then(function(answers) {
-        console.log(answers);
-        // Basic Query to SHOW DATA
-    /*    db.query("SELECT * FROM department;", function(error, data) {
-            if(error) {
-                console.log(error);
-                throw error;
-            }
+            type: "list",
+            message: "What would you like to do?",
+            name: "choice",
+            choices: 
+            [
+                "View All Departments",
+                "View All Roles",
+                "View All Employees",
+                "Add a Department",
+                "Add a Role",
+                "Add an Employee",
+                "Update an Employee Role"
+            ]
+        }
+    ]).then(function(answer) {
+        switch (answer.choice) {
+            case "View All Departments":
+                viewAllDepartments();
+            break;
 
-          //  console.log("Data: ", data);
-            console.table(data);
-        });
-        */
-        
-        // in reference to PREPARED STATEMENTS
-        db.query("INSERT INTO department SET ?;", answers.name, function(error, data) {
-            if(error) {
-                console.log(error);
-                throw error;
-            }
+            case "View All Roles":
+                viewAllRoles();
+            break;
 
-          //  console.log("Data: ", data);
-            console.table(data);
-        });
+            case "View All Employees":
+                viewAllEmployees();
+            break;
 
+            case "Add a Department":
+                addDepartment();
+            break;
 
-    }).catch(function(error) {
-        if(error) {
-            throw error;
+            case "Add a Role":
+                addRole();
+            break;
+
+            case "Add an Employee":
+                addEmployee();
+            break;
+
+            case "Update an Employee Role":
+                updateEmployeeRole();
+            break;
+        }
+    }).catch(function(err) {
+        if(err) {
+            throw err;
         }
     });
+};
 
-    // console.log("I am code after the ASYNC function");
-
-}
+    
 
 init();
